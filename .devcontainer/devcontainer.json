@@ -1,0 +1,7 @@
+{
+  "image": "mcr.microsoft.com/devcontainers/java",
+  "features": {
+    "ghcr.io/devcontainers/features/sshd:1": {},
+    "ghcr.io/kyori19/devcontainer-features/kotlin:1": {}
+  }
+}

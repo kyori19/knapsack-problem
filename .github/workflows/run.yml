@@ -1,0 +1,45 @@
+name: Run
+
+on:
+  - push
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Compile main.kt
+        run: kotlinc $(find . -name '*.kt') -include-runtime -d main.jar
+
+      - name: Upload main.jar
+        uses: actions/upload-artifact@v3
+        with:
+          name: main.jar
+          path: main.jar
+
+      - name: Run main.jar
+        id: run
+        run: |
+          body="$(java -jar main.jar)"
+          echo "body<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$body" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Comment result
+        uses: peter-evans/commit-comment@v2
+        with:
+          body: |
+            Run result for main.jar ([download](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}#artifacts))
+            Compile command: `kotlinc main.kt **/*.kt -include-runtime -d main.jar`
+            Run command: `java -jar main.jar`
+
+            ```txt
+            ${{ steps.run.outputs.body }}
+            ```
