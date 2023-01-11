@@ -1,3 +1,5 @@
+import provider.JohnBurkardt
+
 fun main() {
-  println("Hello, world!")
+  println(JohnBurkardt.getProblem(1))
 }
