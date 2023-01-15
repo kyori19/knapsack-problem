@@ -14,11 +14,11 @@ data class MDSFLA(
     val random: Random = Random,
 ) {
 
-    private val KnapsackProblem.maxBalance: Int
-        get() = items.maxOf { it.profit / it.weight }
+    private val KnapsackProblem.maxPerformance: Int
+        get() = items.maxOf { it.performance }
 
     private val KnapsackProblem.Solution.fitness: Int
-        get() = profit.takeIf { valid } ?: (profit - (problem.maxBalance * (weight - problem.capacity)).squared())
+        get() = profit.takeIf { valid } ?: (profit - (problem.maxPerformance * (weight - problem.capacity)).squared())
 
     fun solve(problem: KnapsackProblem): KnapsackProblem.Solution = problem.run {
         val frogs = MutableList(groupSize * groupCount) { randomSolution(random) }
