@@ -8,12 +8,12 @@ fun main() {
     println(problem)
 
     run {
-        val solution = MDSFLA(5, 5, 10, 10, Random(2023)).solve(problem)
+        val solution = MDSFLA(5, 5, 10, 100, Random(2023)).solve(problem)
         println(solution)
     }
 
     run {
-        val solution = OWOA(25, 100, 1.0, Random(2023)).solve(problem)
+        val solution = OWOA(25, 1000, 1.0, Random(2023)).solve(problem)
         println(solution)
     }
 }

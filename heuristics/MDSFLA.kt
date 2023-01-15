@@ -2,7 +2,6 @@ package heuristics
 
 import knapsack.KnapsackProblem
 import utils.ReplaceableCollection
-import utils.squared
 import utils.toReplaceableDiscreteList
 import kotlin.random.Random
 
@@ -14,11 +13,8 @@ data class MDSFLA(
     val random: Random = Random,
 ) {
 
-    private val KnapsackProblem.maxPerformance: Int
-        get() = items.maxOf { it.performance }
-
-    private val KnapsackProblem.Solution.fitness: Int
-        get() = profit.takeIf { valid } ?: (profit - (problem.maxPerformance * (weight - problem.capacity)).squared())
+    private val KnapsackProblem.Solution.fitness: Double
+        get() = profit.toDouble().takeIf { valid } ?: ((problem.capacity - weight).toDouble() / profit)
 
     fun solve(problem: KnapsackProblem): KnapsackProblem.Solution = problem.run {
         val frogs = MutableList(groupSize * groupCount) { randomSolution(random) }
