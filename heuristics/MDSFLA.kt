@@ -1,6 +1,7 @@
 package heuristics
 
 import knapsack.KnapsackProblem
+import reports.Report
 import utils.ReplaceableCollection
 import utils.toReplaceableDiscreteList
 import kotlin.random.Random
@@ -16,19 +17,23 @@ data class MDSFLA(
     private val KnapsackProblem.Solution.fitness
         get() = profit
 
-    fun solve(problem: KnapsackProblem): KnapsackProblem.Solution = problem.run {
-        val frogs = MutableList(groupSize * groupCount) { randomSolution(random).apply { makeValidGreedy() } }
+    fun solve(problem: KnapsackProblem) = Report {
+        problem.run {
+            val frogs = MutableList(groupSize * groupCount) { randomSolution(random).apply { makeValidGreedy() } }
 
-        repeat(globalIter) { _ ->
-            frogs.sortByDescending { it.fitness }
+            repeat(globalIter) { i ->
+                frogs.sortByDescending { it.fitness }
 
-            frogs.toReplaceableDiscreteList(groupCount)
-                .forEach { group ->
-                    repeat(localIter) { update(group, frogs.best) }
-                }
+                frogs.toReplaceableDiscreteList(groupCount)
+                    .forEach { group ->
+                        repeat(localIter) { j ->
+                            update(group, frogs.best.also { report(i to j, it.fitness) })
+                        }
+                    }
+            }
+
+            frogs.best.also { report(globalIter to 0, it.fitness) }
         }
-
-        frogs.best
     }
 
     private val Collection<KnapsackProblem.Solution>.best: KnapsackProblem.Solution
@@ -47,5 +52,14 @@ data class MDSFLA(
             listOf(item in globalBest, item in worst, random.nextBoolean()).count { it } >= 2
         }.takeIf { it.fitness > worst.fitness } ?: randomSolution(random)
         replace(worst, solution.apply { makeValidGreedy() })
+    }
+
+    private infix fun Int.to(other: Int) = Key(this, other)
+
+    data class Key(
+        val first: Int,
+        val second: Int,
+    ) {
+        override fun toString() = "$first, $second"
     }
 }

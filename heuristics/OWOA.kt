@@ -1,6 +1,7 @@
 package heuristics
 
 import knapsack.KnapsackProblem
+import reports.Report
 import kotlin.math.absoluteValue
 import kotlin.math.cos
 import kotlin.math.exp
@@ -60,13 +61,17 @@ data class OWOA(
             .toSolution(this)
     }
 
-    fun solve(problem: KnapsackProblem): KnapsackProblem.Solution = problem.run {
-        var whales = List(agentCount) { randomSolution(random).apply { makeValidGreedy() } }
-        var best = whales.first()
-        repeat(iter) { i ->
-            best = (listOf(best) + whales + whales.map { !it }.filter { it.valid }).maxBy { it.profit }
-            whales = whales.map { it.move(best, 2.0 / (iter - i)).apply { makeValidGreedy() } }
+    fun solve(problem: KnapsackProblem) = Report {
+        problem.run {
+            var whales = List(agentCount) { randomSolution(random).apply { makeValidGreedy() } }
+            var best = whales.first()
+            repeat(iter) { i ->
+                best = (listOf(best) + whales + whales.map { !it }.filter { it.valid }).maxBy { it.profit }
+                report(i, best.profit)
+                whales = whales.map { it.move(best, 2.0 / (iter - i)).apply { makeValidGreedy() } }
+            }
+            (listOf(best) + whales).maxBy { it.profit }
+                .also { report(iter, it.profit) }
         }
-        (listOf(best) + whales).maxBy { it.profit }
     }
 }
