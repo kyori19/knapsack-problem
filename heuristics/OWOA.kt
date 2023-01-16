@@ -16,12 +16,6 @@ data class OWOA(
     private operator fun KnapsackProblem.Solution.not(): KnapsackProblem.Solution =
         problem.buildSolution { it !in this }
 
-    private fun KnapsackProblem.Solution.makeValid(): KnapsackProblem.Solution = also {
-        while (!valid) {
-            selection.remove(selection.minBy { it.performance })
-        }
-    }
-
     private fun KnapsackProblem.Solution.vectorised(): List<Double> =
         problem.items.map {
             if (it in this) {
@@ -67,11 +61,11 @@ data class OWOA(
     }
 
     fun solve(problem: KnapsackProblem): KnapsackProblem.Solution = problem.run {
-        var whales = List(agentCount) { randomSolution(random).makeValid() }
+        var whales = List(agentCount) { randomSolution(random).apply { makeValidGreedy() } }
         var best = whales.first()
         repeat(iter) { i ->
             best = (listOf(best) + whales + whales.map { !it }.filter { it.valid }).maxBy { it.profit }
-            whales = whales.map { it.move(best, 2.0 / (iter - i)).makeValid() }
+            whales = whales.map { it.move(best, 2.0 / (iter - i)).apply { makeValidGreedy() } }
         }
         (listOf(best) + whales).maxBy { it.profit }
     }

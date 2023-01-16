@@ -10,3 +10,9 @@ fun KnapsackProblem.buildSolution(filter: (Item) -> Boolean) = Solution().apply 
 }
 
 fun KnapsackProblem.randomSolution(random: Random = Random) = buildSolution { random.nextBoolean() }
+
+fun KnapsackProblem.Solution.makeValidGreedy() {
+    while (!valid) {
+        selection.remove(selection.minBy { it.performance })
+    }
+}

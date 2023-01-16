@@ -13,11 +13,11 @@ data class MDSFLA(
     val random: Random = Random,
 ) {
 
-    private val KnapsackProblem.Solution.fitness: Double
-        get() = profit.toDouble().takeIf { valid } ?: ((problem.capacity - weight).toDouble() / profit)
+    private val KnapsackProblem.Solution.fitness
+        get() = profit
 
     fun solve(problem: KnapsackProblem): KnapsackProblem.Solution = problem.run {
-        val frogs = MutableList(groupSize * groupCount) { randomSolution(random) }
+        val frogs = MutableList(groupSize * groupCount) { randomSolution(random).apply { makeValidGreedy() } }
 
         repeat(globalIter) { _ ->
             frogs.sortByDescending { it.fitness }
@@ -46,6 +46,6 @@ data class MDSFLA(
         }.takeIf { it.fitness > worst.fitness } ?: buildSolution { item ->
             listOf(item in globalBest, item in worst, random.nextBoolean()).count { it } >= 2
         }.takeIf { it.fitness > worst.fitness } ?: randomSolution(random)
-        replace(worst, solution)
+        replace(worst, solution.apply { makeValidGreedy() })
     }
 }
