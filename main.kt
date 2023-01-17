@@ -9,13 +9,13 @@ fun main() {
     println(problem)
 
     run {
-        val report = MDSFLA(5, 5, 10, 100, Random(2023)).solve(problem)
+        val report = MDSFLA(10, 10, 10, 500, Random(2023)).solve(problem)
         println(report.solution)
         report.writeCSV(File("MDSFLA.csv").outputStream())
     }
 
     run {
-        val report = OWOA(25, 1000, 1.0, Random(2023)).solve(problem)
+        val report = OWOA(25, 5000, 1.0, Random(2023)).solve(problem)
         println(report.solution)
         report.writeCSV(File("OWOA.csv").outputStream())
     }
