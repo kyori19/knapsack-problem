@@ -68,7 +68,7 @@ data class OWOA(
             repeat(iter) { i ->
                 best = (listOf(best) + whales + whales.map { !it }.filter { it.valid }).maxBy { it.profit }
                 report(i, best.profit)
-                whales = whales.map { it.move(best, 2.0 / (iter - i)).apply { makeValidGreedy() } }
+                whales = whales.map { it.move(best, 2.0 * (iter - i) / iter).apply { makeValidGreedy() } }
             }
             (listOf(best) + whales).maxBy { it.profit }
                 .also { report(iter, it.profit) }
